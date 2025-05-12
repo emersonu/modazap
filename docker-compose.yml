@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  backend-rails:
+    build:
+      context: ./backend-rails
+    volumes:
+      - ./backend-rails:/app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://user:password@bd:5432/customers_db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: customers_db
+
+  backend-nest:
+    build:
+      context: ./backend-nest
+    volumes:
+      - ./backend-nest:/app
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend-rails
+
+volumes:
+  db_data:
